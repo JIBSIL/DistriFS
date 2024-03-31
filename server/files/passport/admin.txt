@@ -1,0 +1,5 @@
+You can only access this directory with special permissions
+
+Put anything secret in here; it's safe!
+
+Or change the directory in config.yaml

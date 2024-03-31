@@ -1,0 +1,5 @@
+server/databases/*
+server/databases
+indexer/indexdb
+indexer/indexdb/*
+config.yaml

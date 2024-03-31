@@ -1,0 +1,3 @@
+Meaning that subdirectories and filestructures are native to its operation.
+
+It supports everything a normal filesystem would!
