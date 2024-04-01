@@ -1,4 +1,7 @@
 # DistriFS: efficient, secure, decentralized filesystem
+
+[![status](https://joss.theoj.org/papers/af09fee13984aa8fc8dc2c5cf062756e/status.svg)](https://joss.theoj.org/papers/af09fee13984aa8fc8dc2c5cf062756e)
+
 DistriFS is a filesystem allowing for decentralized access to files of your choice through a file network. It is comparable to torrenting, IPFS and Storj. An indexer-server approach is used for security and speed. You may learn more about precisely how the software works in the "Academic Paper" section or by reading the respective README.md files in the sub-folders.
 
 # Running a Node
