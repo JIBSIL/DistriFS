@@ -19,7 +19,7 @@ This work is part of academic research titled "DistriFS: A Platform and User Agn
 Coming soon!
 
 # Contributing
-Pull requests are always open! All code for DistriFS is open source and on this repository. Feedback and bug reports are also open via GitHub Issues.
+Pull requests are always open, for both bugfixes and new features! Feedback and bug reports are also open via GitHub Issues - please remember to adhere to our [Code of Conduct](CODE_OF_CONDUCT.md) in Issues. For support, please contact me through the contacts in [my bio](https://github.com/JIBSIL).
 
 # License
 DistriFS is a free-to-use academic work. It is licensed under the MIT license and is free to use in any project, commercial or noncommerical.
