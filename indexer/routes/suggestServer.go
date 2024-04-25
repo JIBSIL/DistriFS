@@ -70,6 +70,16 @@ func PutFileRoute(c *gin.Context) {
 			server.Online = true
 			server.Hashes = 0
 			server.Files = globals.HashItem{}
+
+			c.JSON(200, gin.H{
+				"success": true,
+				"data":    "added_server",
+			})
+		} else {
+			c.JSON(200, gin.H{
+				"success": false,
+				"data":    "server_already_exists",
+			})
 		}
 	}
 }
