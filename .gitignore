@@ -4,3 +4,4 @@ indexer/indexdb
 indexer/indexdb/*
 config.yaml
 server/files/benchmark
+release/binaries/
