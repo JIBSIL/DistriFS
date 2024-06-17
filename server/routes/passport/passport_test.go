@@ -8,6 +8,8 @@ import (
 	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/sha256"
+	"math"
+	"time"
 
 	// "crypto/x509"
 	"encoding/hex"
@@ -194,4 +196,19 @@ func TestPassport(t *testing.T) {
 	} else {
 		t.Logf("Public keys match!")
 	}
+}
+
+// thanks https://gosamples.dev/round-float/
+func roundFloat(val float64, precision uint) float64 {
+	ratio := math.Pow(10, float64(precision))
+	return math.Round(val*ratio) / ratio
+}
+
+func BenchmarkPassport(b *testing.B) {
+	time_in := time.Now()
+	for i := 0; i < b.N; i++ {
+		// we pass in a dummy testing.T object to silence logs
+		TestPassport(&testing.T{})
+	}
+	b.Logf("%s iterations completed (%s, %s s/it)", fmt.Sprint(b.N), time.Since(time_in), fmt.Sprint(roundFloat(time.Since(time_in).Seconds()/float64(b.N), 6)))
 }

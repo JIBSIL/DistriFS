@@ -3,9 +3,14 @@ package files
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
+	"math/rand"
 	"net/http"
+	"os"
+	"strings"
 	"testing"
+	"time"
 )
 
 type GenericResponse struct {
@@ -44,6 +49,22 @@ func SendGetRequest(t *testing.T, url string) []byte {
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		t.Errorf("Failed to read response: %s", err)
+	}
+
+	return body
+}
+
+func SendGetRequestNoOutputNoTesting(url string) []byte {
+	res, err := http.Get(url)
+	if err != nil {
+		// we silently fail in this function (used in benchmark)
+		return []byte{}
+	}
+
+	defer res.Body.Close()
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return []byte{}
 	}
 
 	return body
@@ -138,5 +159,121 @@ func TestStatFile(t *testing.T) {
 		}
 	} else {
 		t.Errorf("StatFile test failed")
+	}
+}
+
+func FileExists(file string) bool {
+	// Test if hello.txt exists (lightweight Exists route)
+	response := SendGetRequestNoOutputNoTesting("http://localhost:8000/files/exists?filename=" + file)
+	var result SimpleGenericResponse
+	if err := json.Unmarshal(response, &result); err != nil {
+		fmt.Printf("Failed to unmarshal JSON: %s", err)
+	}
+
+	if result.Success {
+		return true
+	} else {
+		return false
+	}
+}
+
+func RunDownloadBenchmark(b *testing.B, file string) bool {
+
+	filename := strings.ReplaceAll(file, "./benchmark/", "")
+
+	f, err := os.Create("./tmp/" + filename + "-downloaded-" + fmt.Sprint(rand.Int()) + ".tmp")
+	if err != nil {
+		b.Errorf("Failed to create tmp file: %s", err)
+		return false
+	}
+	defer f.Close()
+
+	response := SendGetRequestNoOutputNoTesting("http://localhost:8000/files/read?filename=" + file)
+	var result GenericResponse
+	if err := json.Unmarshal(response, &result); err != nil {
+		b.Errorf("Failed to unmarshal JSON: %s", err)
+	}
+
+	response = SendGetRequestNoOutputNoTesting("http://localhost:8000/files/download?id=" + result.Data)
+
+	_, err = io.Copy(f, bytes.NewReader(response))
+
+	return err == nil
+}
+
+func ThreadpoolDownloaderWorker(id int, jobs <-chan int, results chan<- int, file string, b *testing.B) {
+	for j := range jobs {
+		if !RunDownloadBenchmark(b, file) {
+			b.Error("Failed to download " + file)
+		}
+		results <- j
+	}
+}
+
+func ThreadpoolDownload(b *testing.B, file string, num int) {
+	jobs := make(chan int, num)
+	results := make(chan int, num)
+
+	for w := 1; w <= 5; w++ {
+		go ThreadpoolDownloaderWorker(w, jobs, results, file, b)
+	}
+
+	for j := 1; j <= num; j++ {
+		jobs <- j
+	}
+	close(jobs)
+
+	// collect results
+	for a := 1; a <= num; a++ {
+		<-results
+	}
+}
+
+func BenchmarkDownload(b *testing.B) {
+	// test if file exists to server
+	if FileExists("./benchmark/1gb-file.bin") && FileExists("./benchmark/100mb-file.bin") && FileExists("./benchmark/1mb-file.bin") {
+		initial := time.Now()
+		// create tmp folder
+		if _, err := os.Stat("./tmp"); os.IsNotExist(err) {
+			os.Mkdir("./tmp", 0755)
+		}
+
+		// download one 1gb file to test
+		if !RunDownloadBenchmark(b, "./benchmark/1gb-file.bin") {
+			b.Errorf("Failed to download 1gb-file.bin")
+		}
+		b.Logf("SEQUENTIAL: Downloaded 1gb-file.bin in %s (%s MB/s)", time.Since(initial), fmt.Sprint(1024/int(time.Since(initial).Seconds())))
+
+		// download ten 100mb files
+		initial = time.Now()
+		for i := 0; i < 10; i++ {
+			if !RunDownloadBenchmark(b, "./benchmark/100mb-file.bin") {
+				b.Errorf("Failed to download 100mb-file.bin")
+			}
+		}
+		b.Logf("SEQUENTIAL: Downloaded 10 100mb-file.bin files sequentially in %s (%s MB/s)", time.Since(initial), fmt.Sprint((100*10)/int(time.Since(initial).Seconds())))
+
+		// download one hundred 1mb files
+		initial = time.Now()
+		for i := 0; i < 100; i++ {
+			if !RunDownloadBenchmark(b, "./benchmark/1mb-file.bin") {
+				b.Errorf("Failed to download 1mb-file.bin")
+			}
+		}
+		b.Logf("SEQUENTIAL: Downloaded 100 1mb-file.bin files sequentially in %s (%s MB/s)", time.Since(initial), fmt.Sprint((1*100)/float32(time.Since(initial).Seconds())))
+
+		// run parallel tests
+		initial = time.Now()
+		ThreadpoolDownload(b, "./benchmark/100mb-file.bin", 10)
+		b.Logf("PARALLEL: Downloaded 10 100mb-file.bin files in %s (%s MB/s)", time.Since(initial), fmt.Sprint((100*10)/int(time.Since(initial).Seconds())))
+
+		initial = time.Now()
+		ThreadpoolDownload(b, "./benchmark/1mb-file.bin", 100)
+		b.Logf("PARALLEL: Downloaded 100 1mb-file.bin files in %s (%s MB/s)", time.Since(initial), fmt.Sprint((1*100)/float32(time.Since(initial).Seconds())))
+
+		// delete tmp folder
+		os.RemoveAll("./tmp")
+	} else {
+		b.Errorf("Make sure to run benchmarks/generate script and move the generated files into the benchmark folder before running this benchmark! Also make sure the server is running.")
 	}
 }

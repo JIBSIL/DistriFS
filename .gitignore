@@ -3,3 +3,4 @@ server/databases
 indexer/indexdb
 indexer/indexdb/*
 config.yaml
+server/files/benchmark
