@@ -35,5 +35,8 @@ DistriFS is built from the ground up as a solution specifically designed to addr
 # Financial Support
 No financial support has been provided by organizations or individuals during the production of this project.
 
+# References
+
+
 [^1]: Namely: Android, Windows, iOS, Linux, macOS, and FreeBSD. Golang supports 23 different architectures, including processors used by edge cases such as microcontrollers and supercomputers
 [^2]: Such as the Such as ISO 22301:2019 certifications obtained by [Google Cloud](https://cloud.google.com/security/compliance/iso-22301) and [Dropbox](https://aem.dropbox.com/cms/content/dam/dropbox/www/en-us/business/trust/iso/dropbox_certificate_iso_22301.pdf)
