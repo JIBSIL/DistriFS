@@ -1,0 +1,28 @@
+cff-version: "1.2.0"
+authors:
+- family-names: Boesch
+  given-names: Julian
+  orcid: "https://orcid.org/0009-0006-8945-0092"
+doi: 10.6084/m9.figshare.26049448
+message: If you use this software, please cite our article in the
+  Journal of Open Source Software.
+preferred-citation:
+  authors:
+  - family-names: Boesch
+    given-names: Julian
+    orcid: "https://orcid.org/0009-0006-8945-0092"
+  date-published: 2024-07-02
+  doi: 10.21105/joss.06625
+  issn: 2475-9066
+  issue: 99
+  journal: Journal of Open Source Software
+  publisher:
+    name: Open Journals
+  start: 6625
+  title: "DistriFS: A Platform and User Agnostic Approach to Dataset
+    Distribution"
+  type: article
+  url: "https://joss.theoj.org/papers/10.21105/joss.06625"
+  volume: 9
+title: "DistriFS: A Platform and User Agnostic Approach to Dataset
+  Distribution"
