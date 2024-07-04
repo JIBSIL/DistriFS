@@ -9,14 +9,8 @@ Participating in the DistriFS network is easy! Releases are built every minor ve
 
 More information is available in the server folder's README.md
 
-# Docker
-Docker support is currently coming soon. A Dockerfile will be provided shortly for both the indexer and server.
-
 # Academic Paper
-This work is part of academic research titled "DistriFS: A Platform and User Agnostic Approach to File Distribution". It is posted on arXiv and will also be added to PAPER.md
-
-# Benchmarks
-Coming soon!
+This work is part of academic research titled "DistriFS: A Platform and User Agnostic Approach to Dataset Distribution". It is posted on [arXiv]([url](https://arxiv.org/abs/2402.13387)) is published in the [Journal of Open Source Software]([url](https://joss.theoj.org/papers/10.21105/joss.06625))
 
 # Contributing
 Pull requests are always open, for both bugfixes and new features! Feedback and bug reports are also open via GitHub Issues - please remember to adhere to our [Code of Conduct](CODE_OF_CONDUCT.md) in Issues. For support, please contact me through the contacts in [my bio](https://github.com/JIBSIL).
